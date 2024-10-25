@@ -21,7 +21,7 @@ export const loginWithGoogle = createAsyncThunk(
 export const logout = () => (dispatch) => {};
 export const registerUser = createAsyncThunk(
   //createAsyncThunk 를 사용하는 이유?
-  // 세가지를 반환한다. => 1. fending 2. 성공 : fulfilld 3. 실패 : rejected
+  // 세가지를 반환한다. => 1. fending 2. full field 3. rejected
   "user/registerUser",
   async (
     { email, name, password, navigate },
@@ -40,7 +40,7 @@ export const registerUser = createAsyncThunk(
     } catch (error) {
       //실패
       //1. 실패 토스트 메시지 보여주기
-      dispatch(showToastMessage({ message: "회원가입 실패", status: "error" }));
+      dispatch(showToastMessage({ message: "회원가입 실패", status: "fail" }));
       //2. 에러값을 저장한다
       return isRejectedWithValue(error.error);
     }
@@ -72,8 +72,8 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending)
-      .addCase(registerUser.fulfilled) // 성공
-      .addCase(registerUser.rejected); // 실패
+      .addCase(registerUser.fulfilled)
+      .addCase(registerUser.rejected);
   },
 });
 export const { clearErrors } = userSlice.actions;
