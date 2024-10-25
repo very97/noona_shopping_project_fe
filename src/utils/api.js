@@ -6,7 +6,7 @@ const BACKEND_PROXY = process.env.REACT_APP_BACKEND_PROXY;
 // console.log("proxy", BACKEND_PROXY);
 const api = axios.create({
   //baseURL: LOCAL_BACKEND,
-  baseURL: PROD_BACKEND + "/api",
+  baseURL: PROD_BACKEND,
   headers: {
     "Content-Type": "application/json",
     authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -15,6 +15,7 @@ const api = axios.create({
 /**
  * console.log all requests and responses
  */
+console.log(PROD_BACKEND);
 api.interceptors.request.use(
   (request) => {
     console.log("Starting Request", request);
