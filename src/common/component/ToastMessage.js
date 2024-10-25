@@ -1,20 +1,26 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ToastMessage = () => {
   const { toastMessage } = useSelector((state) => state.ui);
-  console.log("here", toastMessage);
+  console.log("ToastMessage state:", toastMessage);
+
   useEffect(() => {
     if (toastMessage) {
       const { message, status } = toastMessage;
-      if (message !== "" && status !== "") {
+      const validStatuses = ["success", "error", "info", "warn"]; // 유효한 상태 정의
+
+      // 상태가 유효한 toast 메서드인지 확인
+      if (message && validStatuses.includes(status)) {
         toast[status](message, { theme: "colored" });
+      } else {
+        console.error(`Invalid status: ${status}`, toastMessage);
       }
     }
   }, [toastMessage]);
+
   return (
     <ToastContainer
       position="top-right"
