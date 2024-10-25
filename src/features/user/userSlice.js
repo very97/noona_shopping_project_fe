@@ -29,6 +29,7 @@ export const registerUser = createAsyncThunk(
   ) => {
     try {
       //성공
+
       const response = await api.post("/user", { email, name, password });
       //1. 성공 토스트 메시지 보여주기
       dispatch(
