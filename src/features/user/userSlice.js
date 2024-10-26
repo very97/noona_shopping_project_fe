@@ -10,7 +10,22 @@ import { initialCart } from "../cart/cartSlice";
 
 export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
-  async ({ email, password }, { rejectWithValue }) => {}
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
+
+      //성공
+      // 나중에 처리할건데, 로그인 페이지에서 처리할 것 LoginPage
+      return response.data;
+    } catch (error) {
+      // 실패
+      // 실패시 생긴 에러값을 reducer에 저장
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 export const loginWithGoogle = createAsyncThunk(
@@ -72,9 +87,28 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending)
-      .addCase(registerUser.fulfilled)
-      .addCase(registerUser.rejected);
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.loading = false;
+        state.registrationError = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.registrationError = action.payload;
+      })
+      .addCase(loginWithEmail.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginWithEmail.fulfilled, (state) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.loginError = null;
+      })
+      .addCase(loginWithEmail.rejected, (state, action) => {
+        state.loginError = false;
+        state.loginError = action.payload;
+      });
   },
 });
 export const { clearErrors } = userSlice.actions;
