@@ -12,7 +12,7 @@ export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await api.post("/api/auth/login", {
+      const response = await api.post("/api/login", {
         email,
         password,
       });
@@ -51,7 +51,7 @@ export const registerUser = createAsyncThunk(
         showToastMessage({ message: "회원가입 성공", status: "success" })
       );
       //2. 로그인 페이지 리다이렉트
-      navigate("/api/login");
+      navigate("/login");
       return response.data.data;
     } catch (error) {
       //실패
@@ -90,7 +90,7 @@ const userSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
         state.registrationError = null;
       })
