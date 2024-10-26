@@ -51,7 +51,7 @@ export const registerUser = createAsyncThunk(
         showToastMessage({ message: "회원가입 성공", status: "success" })
       );
       //2. 로그인 페이지 리다이렉트
-      navigate("/login");
+      navigate("/api/login");
       return response.data.data;
     } catch (error) {
       //실패
