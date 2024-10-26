@@ -90,7 +90,7 @@ const userSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.registrationError = null;
       })
@@ -100,7 +100,7 @@ const userSlice = createSlice({
       .addCase(loginWithEmail.pending, (state) => {
         state.loading = true;
       })
-      .addCase(loginWithEmail.fulfilled, (state) => {
+      .addCase(loginWithEmail.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
         state.loginError = null;
