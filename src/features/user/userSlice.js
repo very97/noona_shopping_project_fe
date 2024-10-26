@@ -19,6 +19,22 @@ export const loginWithEmail = createAsyncThunk(
 
       //성공
       // 나중에 처리할건데, 로그인 페이지에서 처리할 것 LoginPage
+      console.log(response.data);
+
+      const tokenData = {
+        level: response.data.token.level,
+        id: response.data.token._id,
+      };
+      sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("token-level", tokenData.level);
+      sessionStorage.setItem("token-id", tokenData.id);
+
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token-level", tokenData.level);
+      localStorage.setItem("token-id", tokenData.id);
+
+      api.defaults.headers.authorization = `Bearer ${response.data.token}`;
+      console.log(tokenData);
       return response.data;
     } catch (error) {
       // 실패
