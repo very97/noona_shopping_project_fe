@@ -19,13 +19,12 @@ export const loginWithEmail = createAsyncThunk(
 
       //성공
       // 나중에 처리할건데, 로그인 페이지에서 처리할 것 LoginPage
-      console.log(response.data);
+      console.log("resonsedata_zzz:", response.data);
+      sessionStorage.setItem("token", response.data.token);
+      //sessionStorage.setItem("token-level", response.data.token.level);
 
-      sessionStorage.setItem("token", response.data.token._id);
-      sessionStorage.setItem("token-level", response.data.token.level);
-
-      localStorage.setItem("token", response.data.token._id);
-      localStorage.setItem("token-level", response.data.token.level);
+      localStorage.setItem("token", response.data.token);
+      //localStorage.setItem("token-level", response.data.token.level);
 
       api.defaults.headers.authorization = `Bearer ${response.data.token}`;
       console.log(response.data);
@@ -43,7 +42,15 @@ export const loginWithGoogle = createAsyncThunk(
   async (token, { rejectWithValue }) => {}
 );
 
-export const logout = () => (dispatch) => {};
+export const logout = () => (dispatch) => {
+  // 사용자 정보를 초기화
+  dispatch(clearErrors()); // 에러 메시지 초기화
+  dispatch({ type: "user/logout" }); // 사용자 상태 초기화
+  sessionStorage.removeItem("token"); // 세션 스토리지에서 토큰 제거
+  localStorage.removeItem("token"); // 로컬 스토리지에서 토큰 제거
+  api.defaults.headers.authorization = ""; // 기본 API 헤더에서 토큰 제거
+};
+
 export const registerUser = createAsyncThunk(
   //createAsyncThunk 를 사용하는 이유?
   // 세가지를 반환한다. => 1. fending 2. full field 3. rejected
@@ -75,7 +82,14 @@ export const registerUser = createAsyncThunk(
 
 export const loginWithToken = createAsyncThunk(
   "user/loginWithToken",
-  async (_, { rejectWithValue }) => {}
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/api/user/me");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 const userSlice = createSlice({
@@ -93,6 +107,10 @@ const userSlice = createSlice({
     clearErrors: (state) => {
       state.loginError = null;
       state.registrationError = null;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.success = false;
     },
   },
   extraReducers: (builder) => {
@@ -118,6 +136,9 @@ const userSlice = createSlice({
       .addCase(loginWithEmail.rejected, (state, action) => {
         state.loginError = false;
         state.loginError = action.payload;
+      })
+      .addCase(loginWithToken.fulfilled, (state, action) => {
+        state.user = action.payload.user;
       });
   },
 });
