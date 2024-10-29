@@ -15,7 +15,7 @@ const api = axios.create({
 /**
  * console.log all requests and responses
  */
-console.log(PROD_BACKEND);
+//console.log(PROD_BACKEND);
 api.interceptors.request.use(
   (request) => {
     console.log("Starting Request", request);

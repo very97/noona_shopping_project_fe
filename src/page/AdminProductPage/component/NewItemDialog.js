@@ -32,6 +32,9 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
 
+  //
+  console.log("stock:", stock);
+
   useEffect(() => {
     if (success) setShowDialog(false);
   }, [success]);
@@ -59,41 +62,80 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const handleClose = () => {
     //모든걸 초기화시키고;
     // 다이얼로그 닫아주기
+    setFormData({ ...InitialFormData });
+    setStock([]);
+    setShowDialog(false);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log("formdata:", formData);
+
+    console.log(stock);
     //재고를 입력했는지 확인, 아니면 에러
+
+    if (stock.length === 0) {
+      return setStockError(true);
+    }
+
     // 재고를 배열에서 객체로 바꿔주기
+
+    let totalStock = {};
+    for (let i = 0; i < stock.length; i++) {
+      const [key, value] = stock[i];
+      totalStock[key] = value;
+    }
+
+    console.log(totalStock);
     // [['M',2]] 에서 {M:2}로
     if (mode === "new") {
       //새 상품 만들기
+      dispatch(createProduct(formData, stock));
     } else {
       // 상품 수정하기
+      dispatch(editProduct(formData, stock, selectedProduct.id));
     }
   };
 
   const handleChange = (event) => {
+    const { id, value } = event.target;
+
+    console.log(id, value);
     //form에 데이터 넣어주기
+    setFormData({ ...formData, [id]: value });
   };
 
   const addStock = () => {
     //재고타입 추가시 배열에 새 배열 추가
+    setStockError(false);
+    setStock([...stock, ["", 0]]);
   };
 
   const deleteStock = (idx) => {
     //재고 삭제하기
+    const newStock = stock.filter((item, index) => index !== idx);
+
+    setStock(newStock);
   };
 
   const handleSizeChange = (value, index) => {
     //  재고 사이즈 변환하기
+    setStockError(false);
+    const newStock = [...stock];
+    newStock[index][0] = value;
+    setStock(newStock);
   };
 
   const handleStockChange = (value, index) => {
     //재고 수량 변환하기
+    setStockError(false);
+    const newStock = [...stock];
+    newStock[index][1] = value;
+    setStock(newStock);
   };
 
   const onHandleCategory = (event) => {
+    // cafegory 가 이미 추가 되어있으면 제거
     if (formData.category.includes(event.target.value)) {
       const newCategory = formData.category.filter(
         (item) => item !== event.target.value
@@ -103,6 +145,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         category: [...newCategory],
       });
     } else {
+      //아니면 새로 추가
       setFormData({
         ...formData,
         category: [...formData.category, event.target.value],
@@ -112,6 +155,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
   const uploadImage = (url) => {
     //이미지 업로드
+    setFormData({ ...formData, image: url });
   };
 
   return (
