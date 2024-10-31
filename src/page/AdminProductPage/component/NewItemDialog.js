@@ -8,6 +8,8 @@ import {
   clearError,
   createProduct,
   editProduct,
+  getProductList,
+  onProductAdded,
 } from "../../../features/product/productSlice";
 
 const InitialFormData = {
@@ -21,7 +23,7 @@ const InitialFormData = {
   price: 0,
 };
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
+const NewItemDialog = ({ mode, showDialog, setShowDialog, onProductAdded }) => {
   const { error, success, selectedProduct } = useSelector(
     (state) => state.product
   );
@@ -90,7 +92,10 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     // [['M',2]] 에서 {M:2}로
     if (mode === "new") {
       //새 상품 만들기
-      dispatch(createProduct({ ...formData, stock: totalStock }));
+      dispatch(createProduct({ ...formData, stock: totalStock })).then(() => {
+        onProductAdded();
+      });
+      //상품 리스트 가져오기
     } else {
       // 상품 수정하기
       dispatch(editProduct(formData, stock, selectedProduct.id));
